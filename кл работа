@@ -1,0 +1,28 @@
+fruits = input('введите фрукты через запятую').split(', ')
+capitalis_fruit = []
+for i in fruits:
+    capitalis_fruit.append(i.capitalize())
+print(sorted(set(capitalis_fruit)))
+p = sorted(set(capitalis_fruit))
+f = set(fruits)
+
+cnt_fruits = {}
+for i in f:
+    cnt_fruits[i] = fruits.count(i)
+
+print(max(cnt_fruits))
+
+print(tuple(f))
+
+if 'banana' in fruits:
+    print('есть банан')
+elif 'mango' in fruits:
+    print('есть манго')
+elif 'pineapple' in fruits:
+    print('есть ананас')
+else:
+    print('ниче нет')
+
+n = int(input('n введите'))
+for i in range(n):
+    print(p[i])
