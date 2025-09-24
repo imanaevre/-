@@ -1,0 +1,225 @@
+import csv
+import codecs
+
+students = {
+    "Иван": {"age": 20, "grades": [5, 4, 3]},
+    "Аня": {"age": 19, "grades": [4, 4, 5]}
+}
+
+def add_student():
+    global students
+
+    name = input("Введите имя студента: ").capitalize()
+
+    if name in students:
+        print("Студент с таким именем уже существует.")
+        return
+
+    while True:
+        age_str = input("Введите возраст студента: ")
+        try:
+            age = int(age_str)
+            if age <= 0:
+                print("Возраст должен быть положительным числом.")
+            else:
+                break
+        except ValueError:
+            print("Пожалуйста, введите целое число для возраста.")
+
+    grades = []
+    while True:
+        grades_str = input("Введите оценки студента через запятую (например, 5,4,3): ")
+        try:
+            grades = [int(grade) for grade in grades_str.split(',')]
+            # Добавляем проверку на допустимый диапазон оценок (например, от 1 до 5)
+            if all(1 <= grade <= 5 for grade in grades):
+                break  # Выходим из цикла, если оценки введены корректно
+            else:
+                print("Оценки должны быть целыми числами от 1 до 5.")
+        except ValueError:
+            print("Пожалуйста, введите целые числа для оценок, разделенные запятыми.")
+
+    students[name] = {"age": age, "grades": grades}
+    print(f"Студент {name} успешно добавлен.")
+def menu():
+    print(
+        "Меню \n1. Добавить студента (имя, возраст, список оценок). \n2. Показать всех студентов. \n3. Найти студента по имени. \n4. Удалить студента. \n5. Добавить новую оценку студенту. \n6. Вывести список студентов старше определённого возраста. \n7. Показать всех студентов с оценкой выше определённого порога. \n8. Экспортировать список студентов в CSV-вид (имя;возраст;оценки). \n9. Импортировать студентов из CSV. \n10. Выход.")
+    while True:
+        numb = input('введите номер выбранного варианта')
+        try:
+            a = int(numb)
+            if 1 <= a <= 10:
+                return a
+                break
+        except:
+            print('введите число')
+
+def show_students():
+    print(students)
+
+
+def find_student():
+    global students
+
+    student_name = input('введите имя студента, которого хотите найти: ').capitalize()
+
+    found = False
+    index = 0
+    student_list = list(students.items())
+
+    while index < len(student_list):
+        name, student_data = student_list[index]
+        if name == student_name:
+            print(name, student_data)
+            found = True
+            break
+        index += 1
+    else:
+        if not found:
+            print('такого студента нет.')
+
+
+def del_student():
+    student = input('введите имя студента, которого хотите удалить').capitalize()
+    if student in students.keys():
+        del (students[student])
+        print('студент удалён')
+        print(students)
+        return students
+    else:
+        print('такого студента нет')
+
+
+def append_grade():
+    student_name = input('введите имя студента, которому хотите добавить оценку: ').capitalize()
+
+    if student_name in students:
+        while True:
+            grade = input('введите оценку, которую хотите добавить: ')
+            try:
+                grade = int(grade)
+                if 1 <= grade <= 5:
+                    students[student_name]["grades"].append(grade)
+                    print(f"оценка {grade} добавлена студенту {student_name}.")
+                    print(students)
+                    return students
+                    break
+                else:
+                    print('оценка должна быть от 1 до 5.')
+            except:
+                print('пожалуйста, введите целое число.')
+    else:
+        print('такого студента нет.')
+
+def older_students():
+    while True:
+        student_old = input('введите возраст: ')
+        try:
+            a = int(student_old)
+            for key in students.keys():
+                if students[key]["age"] > a:
+                    print(key, students[key])
+            break
+        except:
+            print('введите число')
+
+def show_students_above_grade():
+    global students
+    while True:
+        threshold_str = input("Введите порог оценки (целое число от 1 до 5): ")
+        try:
+            threshold = int(threshold_str)
+            if 1 <= threshold <= 5:
+                break
+            else:
+                print("Порог оценки должен быть целым числом от 1 до 5.")
+        except ValueError:
+            print("Пожалуйста, введите целое число.")
+
+    found_students = False
+
+    for name, student_data in students.items():
+        if any(grade > threshold for grade in student_data["grades"]):
+            print(f"Студент: {name}")
+            print(f"  Возраст: {student_data['age']}")
+            print(f"  Оценки: {student_data['grades']}")
+            found_students = True
+
+    if not found_students:
+        print(f"Нет студентов с оценками выше {threshold}.")
+
+def export_to_csv(filename="students.csv"):
+    file = None
+    try:
+        file = codecs.open(filename, 'w', encoding='utf-8', errors='ignore')
+        file.write(codecs.BOM_UTF8.decode('utf-8'))
+        writer = csv.writer(file, delimiter=';', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(["Имя", "Возраст", "Оценки"])
+
+        for name, student_data in students.items():
+            age = student_data["age"]
+            grades = ",".join(map(str, student_data["grades"]))
+
+            writer.writerow([name, age, grades])
+
+        print(f"Список студентов успешно экспортирован в файл '{filename}'.")
+
+    except Exception as e:
+        print(f"Ошибка при экспорте в CSV: {e}")
+    finally:
+        if file:
+            file.close()
+
+
+def import_from_csv(filename="students.csv"):
+    global students
+
+    try:
+        with open(filename, 'r', newline='', encoding='utf-8') as csvfile:
+            reader = csv.reader(csvfile, delimiter=';', quoting=csv.QUOTE_MINIMAL)
+            next(reader)
+
+            for row in reader:
+                if len(row) != 3:
+                    print(f"Ошибка: Неверный формат строки в файле {filename}: {row}.  Строка пропущена.")
+                    continue
+
+                name, age_str, grades_str = row
+                try:
+                    age = int(age_str)
+                    grades = [int(grade) for grade in grades_str.split(',')]
+                    students[name] = {"age": age, "grades": grades}
+                except ValueError:
+                    print(f"Ошибка: Неверный формат данных в строке {row}.  Строка пропущена.")
+                    continue
+
+        print(f"Список студентов успешно импортирован из файла '{filename}'.")
+        print(students)
+    except FileNotFoundError:
+        print(f"Ошибка: Файл '{filename}' не найден.")
+    except Exception as e:
+        print(f"Ошибка при импорте из CSV: {e}")
+
+while True:
+    choice = menu()
+    if choice == 1:
+        add_student()
+    elif choice == 2:
+        show_students()
+    elif choice == 3:
+        find_student()
+    elif choice == 4:
+        del_student()
+    elif choice == 5:
+        append_grade()
+    elif choice == 6:
+        older_students()
+    elif choice == 7:
+         show_students_above_grade()
+    elif choice == 8:
+        export_to_csv()
+    elif choice == 9:
+        import_from_csv()
+    elif choice == 10:
+        print("Выход из программы.")
+        break
