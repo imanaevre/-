@@ -1,0 +1,133 @@
+import functools
+
+menu = {
+    "tea": 80,
+    "sandwich": 200,
+    "juice": 100,
+    "cake": 150,
+    "coffee": 120
+}
+
+def sorted_menu():
+    sorted_menu_alpha = sorted(menu.items(), key=lambda item: item[0])
+    print("Меню по алфавиту:")
+    for item, price in sorted_menu_alpha:
+        print(f"- {item}: {price} руб.")
+    sorted_menu_price = sorted(menu.items(), key=lambda item: item[1])
+    print("Меню по цене:")
+    for item, price in sorted_menu_price:
+        print(f"- {item}: {price} руб.")
+
+def cnt_price():
+    cnt = lambda x: sum(x)//len(x)
+    print('Средняя цена блюда:', cnt(list(menu.values())))
+
+def add_eat():
+    bl = input('введите блюдо, которое хотите добавить: ')
+    while True:
+      try:
+        pr = int(input('введите цену блюда: '))
+        menu[bl] = pr
+        print(f'{bl} добавлено в меню')
+        break
+      except ValueError:
+        print('цена должна быть числом!')
+
+def del_eat():
+    item = input('введите блюдо, которое хотите удалить: ')
+    message = f"{item} удален из меню." if item in menu else f"ошибка: {item} нет в меню."
+    if item in menu:
+        del menu[item]
+    print(message)
+
+def show_cheap_dishes():
+    while True:
+        try:
+            price_limit = int(input("введите предельную цену: "))
+            break
+        except ValueError:
+            print("некорректный ввод цены")
+    cheap_dishes = dict(filter(lambda item: item[1] < price_limit, menu.items()))
+    print(f"блюда дешевле {price_limit} руб.:")
+    for item, price in cheap_dishes.items():
+        print(f"- {item}: {price} руб.")
+
+def find_min_max():
+    cheapest = min(menu.items(), key=lambda item: item[1])
+    most_expensive = max(menu.items(), key=lambda item: item[1])
+    print(f"самое дешевое блюдо: {cheapest[0]} - {cheapest[1]} руб.")
+    print(f"самое дорогое блюдо: {most_expensive[0]} - {most_expensive[1]} руб.")
+
+def sort_drinks():
+    drinks = ["coffee", "tea", "juice"]
+    filtered_drinks = dict(filter(lambda item: item[0] in drinks, menu.items()))
+    sorted_drinks = sorted(filtered_drinks.items(), key=lambda item: item[1])
+    print("напитки, отсортированные по цене:")
+    for item, price in sorted_drinks:
+        print(f"- {item}: {price} руб.")
+
+def create_order():
+    order_input = input("введите список блюд через запятую: ")
+    order_list = list(map(lambda x: x.strip(), order_input.split(',')))
+    order = {item: menu[item] for item in order_list if item in menu}
+    return order
+
+def calculate_total(order):
+    total = functools.reduce(lambda x, y: x + y, order.values(), 0) if order else 0
+    return total
+
+def display_order(order, total):
+    print("ваш заказ:")
+    for i, (item, price) in enumerate(order.items(), 1):
+        print(f"{i}. {item.capitalize()} — {price} руб.")
+    print(f"итого: {total} руб.")
+
+def check_order(order, total):
+    if not order:
+        print("вы ничего не выбрали.")
+    elif total > 500:
+        print("поздравляем, у вас скидка 10%!")
+
+def get_menu_choice():
+    return input("выберите действие: ")
+
+
+
+while True:
+    print("\nМеню:")
+    print("1. Показать меню (алфавит и цена)")
+    print("2. Добавить блюдо")
+    print("3. Удалить блюдо")
+    print("4. Показать среднюю цену")
+    print("5. Показать блюда дешевле N")
+    print("6. Найти самое дешевое и дорогое блюдо")
+    print("7. Показать и отсортировать напитки")
+    print("8. Сформировать заказ")
+    print("0. Выход")
+
+    choice = get_menu_choice()
+
+    if choice == "1":
+        sorted_menu()
+    elif choice == "2":
+        add_eat()
+    elif choice == "3":
+        del_eat()
+    elif choice == "4":
+        cnt_price()
+    elif choice == "5":
+        show_cheap_dishes()
+    elif choice == "6":
+        find_min_max()
+    elif choice == "7":
+        sort_drinks()
+    elif choice == "8":
+        order = create_order()
+        total = calculate_total(order)
+        display_order(order, total)
+        check_order(order, total)
+    elif choice == "0":
+        print("до свидания")
+        break
+    else:
+        print("неккоректный ввод")
