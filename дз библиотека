@@ -1,0 +1,78 @@
+books = [
+    {"id": 1, "title": "Мастер и Маргарита", "author": "Булгаков", "year": 1966},
+    {"id": 2, "title": "Преступление и наказание", "author": "Достоевский", "year": 1866},
+    {"id": 3, "title": "Война и мир", "author": "Толстой", "year": 1869},
+    {"id": 4, "title": "Анна Каренина", "author": "Толстой", "year": 1877},
+    {"id": 5, "title": "Собачье сердце", "author": "Булгаков", "year": 1925}
+]
+
+def find_title_book():
+    book = input('введите название книги, которую хотите найти: ')
+    a = False
+    for i in books:
+        if i["title"] == book:
+            a = True
+            print('Книга найдена')
+            print(f'ID книги: {i["id"]}\nНазвание книги: {i["title"]}\nАвтор: {i["author"]}\nГод выпуска: {i["year"]}')
+            break
+    if a == False:
+        print('Книга не найдена')
+
+def find_author_book():
+    author = input('введите автора, книги которого хотите найти: ')
+    book = []
+    for i in books:
+        if i['author'] == author:
+            book.append(i['title'])
+    if len(book) != 0:
+        print('Книги найдены:')
+        for i in book:
+            print(i)
+    else:
+        print('Такого автора нет')
+
+def sort_year():
+    print('книги отсортированы')
+    n = len(books)
+    for i in range(n):
+        swapped = False
+        for j in range(0, n - i - 1):
+            if books[j]['year'] > books[j + 1]['year']:
+                books[j], books[j + 1] = books[j + 1], books[j]
+                swapped = True
+        if not swapped:
+            break
+    return books
+
+def find_range_year_book():
+    rng = input('введите диапазон (пример: 1891-2025): ').split('-')
+    year1 = int(rng[0])
+    year2 = int(rng[1])
+    book = []
+    for i in books:
+        if year1 <= i['year'] <= year2:
+            book.append(i['title'])
+    if len(book) != 0:
+        print('Книги найдены:')
+        for i in book:
+            print(i)
+    else:
+        print('Таких книг нет')
+
+
+
+
+while True:
+    print(f'1. Найти книгу по названию\n2. Найти все книги автора\n3. Отсортировать книги по году издания\n4. Найти книги по диапазону лет\n')
+    a = int(input('введите номер выбранного варианта или 0 для завершения: '))
+    if a == 0:
+        print('Выход...')
+        break
+    if a == 1:
+        find_title_book()
+    if a == 2:
+        find_author_book()
+    if a == 3:
+        sort_year()
+    if a == 4:
+        find_range_year_book()
