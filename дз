@@ -1,0 +1,60 @@
+from functools import reduce
+
+people = [
+    {"name": "Анна", "age": 19, "hobby": "рисование", "salary": 40000},
+    {"name": "Илья", "age": 32, "hobby": "спорт", "salary": 85000},
+    {"name": "Катя", "age": 24, "hobby": "фото", "salary": 60000},
+    {"name": "Даня", "age": 17, "hobby": "игры", "salary": 0},
+    {"name": "Олег", "age": 45, "hobby": "рыбалка", "salary": 120000},
+    {"name": "Вика", "age": 28, "hobby": "чтение", "salary": 70000}
+]
+
+print("часть 1")
+
+older_than_25 = list(filter(lambda n: n["age"] > 25, people))
+print("Старше 25 лет:", older_than_25)
+
+salary_above_50k = list(filter(lambda n: n["salary"] > 50000, people))
+print("Зарплата выше 50 000:", salary_above_50k)
+
+hobby_starts_with_r = list(filter(lambda n: n["hobby"][0] == 'р', people))
+print("Хобби на 'р':", hobby_starts_with_r)
+
+print("часть 2")
+
+names = list(map(lambda n: n["name"], people))
+print("Список имён:", names)
+
+people_with_increased_salary = list(map(lambda n: {**n, "salary": int(n["salary"] * 1.1)},people))
+print("Зп +10%:", people_with_increased_salary)
+
+name_age_strings = list(map(lambda n: f"{n['name']}: {n['age']} лет", people))
+print("Имя: Возраст:", name_age_strings)
+
+print("часть 3")
+
+total_salary = reduce(lambda acc, n: acc + n["salary"], people, 0)
+print("Суммарная зарплата:", total_salary)
+
+total_age = reduce(lambda acc, n: acc + n["age"], people, 0)
+average_age = total_age / len(people)
+print("Средний возраст:", average_age)
+
+person_with_max_salary = reduce(lambda current_max, n: n if n["salary"] > current_max["salary"] else current_max,people)
+print("Человек с максимальной зарплатой:", person_with_max_salary["name"])
+
+print("часть 4")
+
+sorted_by_age = sorted(people, key=lambda n: n["age"])
+print("Отсортировано по возрасту:", sorted_by_age)
+
+sorted_by_hobby_length = sorted(people, key=lambda n: len(n["hobby"]))
+print("Отсортировано по длине хобби:", sorted_by_hobby_length)
+
+name_length_tuples = list(map(lambda n: (n["name"], len(n["name"])), people))
+print("Кортежи:", name_length_tuples)
+
+print("финальное задание")
+
+result_names_final = list(map(lambda n: n["name"],filter(lambda n: n["age"] > 20 and n["salary"] > 50000 and len(n["hobby"]) > 4,people)))
+print("Финальный результат:", result_names_final)
