@@ -1,0 +1,60 @@
+from datetime import datetime
+
+class Product:
+    def __init__(self, name, calories_per_100g):
+        self.name = name
+        self.calories_per_100g = calories_per_100g
+
+
+class MenuItem:
+    def __init__(self, name, price, composition):
+        self.name = name
+        self.price = price
+        self.composition = composition
+
+    @property
+    def calories(self):
+        total = 0
+        for product, grams in self.composition.items():
+            total += product.calories_per_100g * grams / 100
+        return total
+
+
+class Customer:
+    def __init__(self, name):
+        self.name = name
+        self.added_at = datetime.now()
+
+
+class Order:
+    def __init__(self, customer):
+        self.customer = customer
+        self.items = []
+        self.created_at = datetime.now()
+
+    def add_item(self, item):
+        self.items.append(item)
+
+    def total_price(self):
+        return sum(item.price for item in self.items)
+
+
+p1 = Product("Сыр", 350)
+p2 = Product("Хлеб", 250)
+p3 = Product("Ветчина", 270)
+p4 = Product("Помидор", 20)
+
+sandwich = MenuItem("Сэндвич", 200, {p1: 30, p2: 50, p3: 40, p4: 20})
+salad = MenuItem("Салат", 150, {p4: 100, p1: 20})
+
+customer = Customer("Иван")
+order = Order(customer)
+order.add_item(sandwich)
+order.add_item(salad)
+
+print("Клиент:", customer.name)
+print("Дата заказа:", order.created_at)
+print("Блюда в заказе:")
+for item in order.items:
+    print(f"- {item.name}, калорийность: {item.calories:.1f}, цена: {item.price}")
+print("Итоговая сумма:", order.total_price())
