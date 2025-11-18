@@ -1,0 +1,118 @@
+from abc import ABC, abstractmethod
+import math
+
+
+class Shape(ABC):
+
+    @abstractmethod
+    def calculate_area(self):
+        pass
+
+    @abstractmethod
+    def calculate_perimetr(self):
+        pass
+
+    def info(self):
+        return "Фигура"
+
+
+class Square(Shape):
+    def __init__(self, side):
+        self.side = side
+
+    def calculate_area(self):
+        return self.side ** 2
+
+    def calculate_perimetr(self):
+        return self.side * 4
+
+    def info(self):
+        return "Квадрат"
+
+    def __str__(self):
+        return f"Квадрат со стороной {self.side}"
+
+    def __len__(self):
+        return self.calculate_perimetr()
+
+    def __eq__(self, other_value):
+        if not isinstance(other_value, Square):
+            return NotImplemented
+        return self.calculate_area() == other_value.calculate_area()
+
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def calculate_area(self):
+        return math.pi * self.radius ** 2
+
+    def calculate_perimetr(self):
+        return math.pi * self.radius * 2
+
+    def info(self):
+        return "Круг"
+
+    def __str__(self):
+        return f"Круг с радиусом {self.radius}"
+
+    def __len__(self):
+        return self.calculate_perimetr
+
+    def __eq__(self, other_value):
+        if not isinstance(other_value, Circle):
+            return NotImplemented
+        return self.calculate_area == other_value.calculate_area()
+
+
+class Geometry_calculator:
+    @staticmethod
+    def validate_positive(number):
+        if number > 0:
+            return True
+        return False
+
+    @staticmethod
+    def calculate_diagonal(lenght, widht):
+        if lenght < 0 or widht < 0:
+            raise ValueError("Длина и ширина должны быть положительными")
+        return math.sqrt(widht ** 2 + lenght ** 2)
+
+    @staticmethod
+    def is_larger(shape1, shape2):
+        area1 = shape1.calculate_area()
+        area2 = shape2.calculate_area()
+        if area1 > area2:
+            return shape1
+        elif area2 > area1:
+            return shape2
+        else:
+            return None  # равны
+
+
+a = Square(4)
+e = Circle(5)
+print(f"\nПлощадь квадрата: {a.calculate_area()}")
+print(f"\nПлощадь круга: {e.calculate_area()}")
+
+print(f"\nПериметр квадрата: {a.calculate_perimetr()}")
+print(f"\nПериметр круга: {e.calculate_perimetr()}")
+
+print(f"{a.info()}")
+print(f"{e.info()}")
+
+print(f"{a.__str__()}")
+print(f"{e.__str__()}")
+
+print(f"{a.__len__()}")
+
+b = Square(4)
+print(f"{a.__eq__(b)}")
+
+print(f"{Geometry_calculator.validate_positive(5)}")
+print(f"{Geometry_calculator.calculate_diagonal(4, 5)}")
+
+c = Square(6)
+d = Square(8)
+print(f"{Geometry_calculator.is_larger(c, d)}")
