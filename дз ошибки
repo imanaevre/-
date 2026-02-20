@@ -1,0 +1,52 @@
+class CalcError(Exception):
+    pass
+
+
+def validate_name(name):
+    if name == '':
+        raise ValueError("Имя не может быть пустым")
+
+def validate_age(age):
+    try:
+        age = int(age)
+    except ValueError:
+        raise ValueError("Возраст должен быть числом")
+
+    if age < 12:
+        raise ValueError("Слишком маленький возраст")
+
+def validate_tickets(ticket):
+    try:
+        ticket = int(ticket)
+    except ValueError:
+        raise ValueError("Количество билетов должно быть числом")
+
+    if ticket < 0 or ticket > 5:
+        raise ValueError("Некорректное количество билетов")
+
+def validate_budget(money):
+    try:
+        money = int(money)
+    except ValueError:
+        raise ValueError("Сумма должна быть числом")
+
+    if money < 0:
+        raise ValueError("Некорректный бюджет")
+
+def calculate_total(ticket):
+    total = int(ticket)*500
+    return total
+
+name = input('введите имя: ')
+validate_name(name)
+age = input('введите возраст: ')
+validate_age(age)
+ticket = input('введите кол-во билетов: ')
+validate_tickets(ticket)
+money = input('введите бюджет: ')
+validate_budget(money)
+
+if int(money) < calculate_total(ticket):
+    raise CalcError('Недостаточно средств')
+else:
+    print('Бронирование завершено успешно')
