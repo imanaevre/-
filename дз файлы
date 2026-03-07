@@ -1,0 +1,114 @@
+import os
+
+
+class NotesManager:
+    def __init__(self, folder="notes"):
+        self.folder = folder
+
+        # создаём папку notes, если её нет
+        if not os.path.exists(self.folder):
+            os.makedirs(self.folder)
+
+    def add_note(self, title, text):
+        try:
+            path = os.path.join(self.folder, f"{title}.txt")
+            with open(path, "w", encoding="utf-8") as file:
+                file.write(text)
+            print("Заметка создана.")
+        except Exception as e:
+            print("Ошибка при создании заметки:", e)
+
+    def list_notes(self):
+        try:
+            files = os.listdir(self.folder)
+            if not files:
+                print("Заметок нет.")
+                return
+
+            print("Список заметок:")
+            for file in files:
+                print("-", file)
+        except Exception as e:
+            print("Ошибка при получении списка:", e)
+
+    def read_note(self, title):
+        try:
+            path = os.path.join(self.folder, f"{title}.txt")
+            if not os.path.exists(path):
+                print("Заметка не найдена.")
+                return
+
+            with open(path, "r", encoding="utf-8") as file:
+                print("\nСодержимое заметки:")
+                print(file.read())
+        except Exception as e:
+            print("Ошибка при чтении заметки:", e)
+
+    def delete_note(self, title):
+        try:
+            path = os.path.join(self.folder, f"{title}.txt")
+            if not os.path.exists(path):
+                print("Заметка не найдена.")
+                return
+
+            os.remove(path)
+            print("Заметка удалена.")
+        except Exception as e:
+            print("Ошибка при удалении:", e)
+
+    def clear_notes(self):
+        try:
+            files = os.listdir(self.folder)
+            for file in files:
+                path = os.path.join(self.folder, file)
+                os.remove(path)
+            print("Все заметки удалены.")
+        except Exception as e:
+            print("Ошибка при очистке:", e)
+
+
+def menu():
+    manager = NotesManager()
+
+    while True:
+        print("\nМеню:")
+        print("1 - Создать заметку")
+        print("2 - Показать список заметок")
+        print("3 - Прочитать заметку")
+        print("4 - Удалить заметку")
+        print("5 - Удалить все заметки")
+        print("0 - Выход")
+
+        choice = input("Выберите действие: ")
+
+        if choice == "1":
+            title = input("Название заметки: ")
+            text = input("Текст заметки: ")
+            manager.add_note(title, text)
+
+        elif choice == "2":
+            manager.list_notes()
+
+        elif choice == "3":
+            title = input("Введите название заметки: ")
+            manager.read_note(title)
+
+        elif choice == "4":
+            title = input("Введите название заметки: ")
+            manager.delete_note(title)
+
+        elif choice == "5":
+            confirm = input("Удалить ВСЕ заметки? (y/n): ")
+            if confirm.lower() == "y":
+                manager.clear_notes()
+
+        elif choice == "0":
+            print("Выход из программы.")
+            break
+
+        else:
+            print("Неверный выбор. Попробуйте снова.")
+
+
+if __name__ == "__main__":
+    menu()
