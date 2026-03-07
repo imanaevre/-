@@ -1,0 +1,53 @@
+import numpy as np
+
+class EvenIterator:
+    def __init__(self, n):
+        self.n = n
+        self.current = 2
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.current > self.n:
+            raise StopIteration
+        value = self.current
+        self.current += 2
+        return value
+
+
+class ReverseList:
+    def __init__(self, lst):
+        self.lst = lst
+        self.index = len(lst) - 1
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index < 0:
+            raise StopIteration
+        value = self.lst[self.index]
+        self.index -= 1
+        return value
+
+data = [10, 20, 30]
+
+for x in ReverseList(data):
+    print(x)
+
+
+arr = np.array([3, 7, 1, 9, 4])
+
+print(max(arr))
+print(sum(arr)/len(arr))
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+print(a+b)
+
+arr = np.array([1, 2, 3, 4])
+
+c = arr*3
+print(c)
