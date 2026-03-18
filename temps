@@ -1,0 +1,63 @@
+import numpy as np
+from functools import reduce
+
+temperatures = np.random.randint(-20, 40, 10000)
+
+def temp_generator(temperatures):
+    for temp in temperatures:
+        yield temp
+
+def clean_data(data):
+    return filter(lambda x: -15<=x<=35, data)
+
+def transform_data(data, mean, std):
+    return map(lambda x: np.sin((x - mean) / std) + ((x - mean) / std)**2, data)
+
+def window_generator(data):
+    window = []
+    for value in data:
+        window.append(value)
+        if len(window) == 30:
+            yield window
+            window = []
+
+def analyze_window(window):
+    return {
+        'mean': np.mean(window),
+        'median': np.median(window),
+        'std': np.std(window),
+        'min': np.min(window),
+        'max': np.max(window)
+    }
+
+temps = temp_generator(temperatures)
+cleaned = clean_data(temps)
+
+
+a = list(filter(lambda x: -15<=x<=35, temperatures))
+mean = np.mean(a)
+std = np.std(a)
+
+transformed = transform_data(cleaned, mean, std)
+
+windows = window_generator(transformed)
+
+analyzed = map(analyze_window, windows)
+
+anomalies = list(filter(lambda x: abs(x['mean'])>1 or x['std']>1, analyzed))
+
+total_windows = len(list(window_generator(transform_data(clean_data(temp_generator(temperatures)), mean, std))))
+
+def reducer(acc, w):
+    return {
+        "count": acc["count"] + 1,
+        "sum_mean": acc["sum_mean"] + w["mean"],
+        "max_mean": max(acc["max_mean"], w["mean"])
+    }
+
+result = reduce(reducer,anomalies,{"count": 0, "sum_mean": 0, "max_mean": float("-inf")})
+
+print(f"Всего окон: {total_windows}")
+print(f"Аномальных окон: {result['count']}")
+print(f"Максимальное среднее значение: {result['max_mean']}")
+print(f"Сумма средних значений: {result['sum_mean']}")
